@@ -322,11 +322,31 @@ export default {
         const orderId = Number(match[2]);
         const status = action === "accept" ? "accepted" : "rejected";
 
-        const result = await env.DB.prepare(`
-          UPDATE orders
-          SET status = ?
-          WHERE id = ? AND status = 'new'
-        `).bind(status, orderId).run();
+     let result;
+
+try {
+  result = await env.DB.prepare(`
+    UPDATE orders
+    SET status = ?
+    WHERE id = ? AND status = 'new'
+  `).bind(status, orderId).run();
+
+} catch (error) {
+  console.error("Order status update error:", error);
+
+  const insufficientStock =
+    String(error.message || "").includes("INSUFFICIENT_STOCK");
+
+  await telegram(env, "answerCallbackQuery", {
+    callback_query_id: callback.id,
+    text: insufficientStock
+      ? "❌ Недостаточно товара на складе!"
+      : "⚠️ Ошибка обработки заказа. Попробуйте позже.",
+    show_alert: true
+  });
+
+  return json({ ok: false, error: "Не удалось обработать заказ" });
+}
 
         if (!result.meta.changes) {
           await telegram(env, "answerCallbackQuery", {
