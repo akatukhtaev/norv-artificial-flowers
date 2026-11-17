@@ -52,7 +52,128 @@ function closeCart(){el('drawer').classList.remove('open');document.body.style.o
 function renderCart(){let rows=cart.map(x=>{let p=products.find(y=>y.id===x.id);return p?{...p,qty:x.qty}:null}).filter(Boolean),total=rows.reduce((s,p)=>s+p.price*p.qty,0);el('drawerPanel').innerHTML=`<div class="drawerHead"><h2 style="font:25px 'Playfair Display'">Корзина</h2><button class="close" onclick="closeCart()">×</button></div>${rows.length?rows.map(p=>`<div class="cartitem">${p.image?`<img src="${esc(p.image)}">`:'<div></div>'}<div><b>${esc(p.name)}</b><small>${p.qty} × ${fmt(p.price)}</small><button class="small" onclick="cartQty(${p.id},-1)">−</button><button class="small" onclick="cartQty(${p.id},1)">+</button></div><button class="small" onclick="removeCart(${p.id})">×</button></div>`).join(''):`<p class="hint">Корзина пока пуста. Добавьте понравившиеся цветы из каталога.</p>`}<div class="carttotal"><span>Итого по розничной цене</span><span>${fmt(total)}</span></div><p class="hint">Оптовые и упаковочные условия уточняются при подтверждении заказа.</p><button class="primary" style="width:100%" onclick="checkout()">Оформить запрос</button>`}
 function cartQty(id,n){let x=cart.find(x=>x.id===id);if(x)x.qty=Math.max(1,x.qty+n);localStorage.setItem('norv_cart',JSON.stringify(cart));updateCounts();renderCart()}
 function removeCart(id){cart=cart.filter(x=>x.id!==id);localStorage.setItem('norv_cart',JSON.stringify(cart));updateCounts();renderCart()}
-function checkout(){let rows=cart.map(x=>{let p=products.find(y=>y.id===x.id);return p?`${p.name} (${p.sku}) — ${x.qty} шт.`:''}).filter(Boolean);if(!rows.length)return toast('Корзина пуста');let msg=encodeURIComponent('Здравствуйте! Хочу оформить заказ NORV:\n'+rows.join('\n'));let phone=window.NORV_WHATSAPP||'';if(phone)window.open('https://wa.me/'+phone+'?text='+msg,'_blank');else toast('Добавьте номер WhatsApp в настройках перед приёмом заказов')}
+function checkout(){
+  const rows=cart.map(x=>{
+    const p=products.find(y=>y.id===x.id);
+    return p?{...p,qty:x.qty}:null;
+  }).filter(Boolean);
+
+  if(!rows.length)return toast('Корзина пуста');
+
+  const total=rows.reduce((s,p)=>s+p.price*p.qty,0);
+
+  openModal(`
+    <div class="panelhead">
+      <h2>Оформление заказа</h2>
+      <button class="close" onclick="closeModal()">×</button>
+    </div>
+    <form id="checkoutForm" class="formgrid">
+      <div class="field">
+        <label>Ваше имя *</label>
+        <input name="name" required placeholder="Ваше имя">
+      </div>
+      <div class="field">
+        <label>Телефон *</label>
+        <input name="phone" type="tel" required placeholder="+7 900 000-00-00">
+      </div>
+      <div class="field full">
+        <label>Email</label>
+        <input name="email" type="email" placeholder="Необязательно">
+      </div>
+      <div class="field full">
+        <label>Способ получения</label>
+        <select name="delivery_method" id="deliveryMethod">
+          <option value="pickup">Самовывоз</option>
+          <option value="courier">Курьерская доставка</option>
+        </select>
+      </div>
+      <div class="field full" id="addressField" style="display:none">
+        <label>Адрес доставки *</label>
+        <input name="delivery_address" placeholder="Улица, дом, квартира">
+      </div>
+      <div class="field full">
+        <label>Комментарий</label>
+        <textarea name="comment" rows="2"></textarea>
+      </div>
+      <div class="field full">
+        <b>Ваш заказ</b>
+        <p class="hint">${rows.map(p=>esc(p.name)+' — '+p.qty+' × '+fmt(p.price)).join('<br>')}</p>
+        <div class="carttotal">
+          <span>Итого</span><span>${fmt(total)}</span>
+        </div>
+      </div>
+      <p class="hint full">Оплата наличными при получении. Мы свяжемся с вами для подтверждения.</p>
+      <div class="field full">
+        <button class="btn" id="submitOrderBtn">ОТПРАВИТЬ ЗАКАЗ</button>
+        <p class="hint" id="checkoutError"></p>
+      </div>
+    </form>
+  `);
+
+  el('deliveryMethod').onchange=e=>{
+    el('addressField').style.display=
+      e.target.value==='courier'?'block':'none';
+  };
+
+  el('checkoutForm').onsubmit=submitOrder;
+}
+
+async function submitOrder(e){
+  e.preventDefault();
+
+  const form=e.target;
+  const data=new FormData(form);
+  const button=el('submitOrderBtn');
+  const error=el('checkoutError');
+
+  button.disabled=true;
+  button.textContent='ОТПРАВЛЯЕМ…';
+
+  try{
+    const result=await api('/orders',{
+      method:'POST',
+      body:JSON.stringify({
+        customer:{
+          name:data.get('name'),
+          phone:data.get('phone'),
+          email:data.get('email')
+        },
+        items:cart.map(x=>({
+          product_id:x.id,
+          quantity:x.qty,
+          price_type:'piece'
+        })),
+        delivery_method:data.get('delivery_method'),
+        delivery_address:data.get('delivery_address'),
+        comment:data.get('comment')
+      })
+    });
+
+    cart=[];
+    localStorage.setItem('norv_cart',JSON.stringify(cart));
+    updateCounts();
+    closeModal();
+    closeCart();
+
+    openModal(`
+      <div class="panelhead">
+        <h2>Спасибо за заказ!</h2>
+        <button class="close" onclick="closeModal()">×</button>
+      </div>
+      <div style="text-align:center;padding:25px">
+        <h2>Заказ №${result.order_id} принят!</h2>
+        <p class="hint">Сумма: ${fmt(result.total)}</p>
+        <p>Мы свяжемся с вами для подтверждения.</p>
+        <button class="primary" onclick="closeModal()">ПРОДОЛЖИТЬ ПОКУПКИ</button>
+      </div>
+    `);
+
+  }catch(err){
+    error.textContent=err.message||'Ошибка отправки заказа';
+    button.disabled=false;
+    button.textContent='ОТПРАВИТЬ ЗАКАЗ';
+  }
+}
 function orderProduct(id){let p=products.find(x=>x.id===id),msg=encodeURIComponent(`Здравствуйте! Интересует ${p.name} (${p.sku}). Подскажите наличие и условия покупки поштучно, упаковкой и оптом.`),phone=window.NORV_WHATSAPP||'';if(phone)window.open('https://wa.me/'+phone+'?text='+msg,'_blank');else toast('Номер WhatsApp пока не настроен')}
 function contactWholesale(){let phone=window.NORV_WHATSAPP||'';if(phone)window.open('https://wa.me/'+phone+'?text='+encodeURIComponent('Здравствуйте! Хочу узнать оптовые условия NORV.'),'_blank');else toast('Номер WhatsApp пока не настроен')}
 function toast(t){el('toast').textContent=t;el('toast').classList.add('show');setTimeout(()=>el('toast').classList.remove('show'),2300)}
