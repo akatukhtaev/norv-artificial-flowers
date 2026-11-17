@@ -174,7 +174,33 @@ async function submitOrder(e){
     button.textContent='ОТПРАВИТЬ ЗАКАЗ';
   }
 }
-function orderProduct(id){let p=products.find(x=>x.id===id),msg=encodeURIComponent(`Здравствуйте! Интересует ${p.name} (${p.sku}). Подскажите наличие и условия покупки поштучно, упаковкой и оптом.`),phone=window.NORV_WHATSAPP||'';if(phone)window.open('https://wa.me/'+phone+'?text='+msg,'_blank');else toast('Номер WhatsApp пока не настроен')}
+const NORV_WHATSAPP = '79997660818';
+
+function orderProduct(id, channel = 'whatsapp') {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+
+  const message =
+    `Здравствуйте! Хочу заказать в NORV:\n` +
+    `Товар: ${p.name}\n` +
+    `Артикул: ${p.sku || '—'}\n` +
+    `Цена: ${fmt(p.price)} за ${p.unit || 'шт.'}\n` +
+    `Подскажите наличие и условия заказа.`;
+
+  const text = encodeURIComponent(message);
+
+  if (channel === 'whatsapp') {
+    window.open(
+      'https://wa.me/' + NORV_WHATSAPP + '?text=' + text,
+      '_blank'
+    );
+  } else {
+    window.open(
+      'https://t.me/share/url?url=&text=' + text,
+      '_blank'
+    );
+  }
+}
 function contactWholesale(){let phone=window.NORV_WHATSAPP||'';if(phone)window.open('https://wa.me/'+phone+'?text='+encodeURIComponent('Здравствуйте! Хочу узнать оптовые условия NORV.'),'_blank');else toast('Номер WhatsApp пока не настроен')}
 function toast(t){el('toast').textContent=t;el('toast').classList.add('show');setTimeout(()=>el('toast').classList.remove('show'),2300)}
 async function adminOpen(){if(adminToken){adminPanel();return}openModal(`<div class="panelhead"><h2>Вход администратора</h2><button class="close" onclick="closeModal()">×</button></div><div class="login"><p class="hint">Войдите, чтобы управлять ассортиментом и ценами.</p><input id="password" type="password" placeholder="Пароль администратора"><button class="btn" onclick="login()">ВОЙТИ</button></div>`)}
