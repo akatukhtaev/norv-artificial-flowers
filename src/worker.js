@@ -165,13 +165,18 @@ export default {
           total += price * quantity;
 
           preparedItems.push({
-            id: product.id,
-            name: product.name,
-            sku: product.sku || "",
-            quantity,
-            price,
-            priceType
-          });
+  id: product.id,
+  name: product.name,
+  sku: product.sku || "",
+  quantity,
+  price,
+  priceType,
+  stockQuantity: quantity * (
+    priceType === "pack"
+      ? Number(product.package_quantity || 1)
+      : 1
+  )
+});
         }
 
         const customerResult = await env.DB.prepare(`
@@ -202,17 +207,22 @@ export default {
         const orderId = orderResult.meta.last_row_id;
 
         for (const item of preparedItems) {
-          await env.DB.prepare(`
-            INSERT INTO order_items
-            (order_id, product_id, quantity, price)
-            VALUES (?, ?, ?, ?)
-          `).bind(
-            orderId,
-            item.id,
-            item.quantity,
-            item.price
-          ).run();
-        }
+  await env.DB.prepare(`
+    INSERT INTO order_items
+    (order_id, product_id, quantity, price,
+     product_name, sku, price_type, stock_quantity)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    orderId,
+    item.id,
+    item.quantity,
+    item.price,
+    item.name,
+    item.sku,
+    item.priceType,
+    item.stockQuantity
+  ).run();
+}
 
         const telegramText = [
           `<b>🌷 NORV — НОВЫЙ ЗАКАЗ №${orderId}</b>`,
