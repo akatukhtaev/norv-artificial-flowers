@@ -10,4 +10,4 @@ run_worker_first = ["/api/*"]
 [[d1_databases]]
 binding = "DB"
 database_name = "norv-products"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "446687da-c79c-45ed-a65b-70120a0407f1"
