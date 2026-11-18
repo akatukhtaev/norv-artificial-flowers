@@ -581,7 +581,7 @@ function makeSlug(value) {
   return String(value)
     .toLowerCase()
     .trim()
-    ..replace(/[^a-z0-9\u{430}-\u{44f}\u{451}]+/giu, "-")
+    .replace(/[^a-z0-9\u{430}-\u{44f}\u{451}]+/giu, "-")
     .replace(/^-+|-+$/g, "") || "product";
 }
 
