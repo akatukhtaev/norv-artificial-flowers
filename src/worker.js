@@ -62,11 +62,11 @@ export default {
         const body = await request.json();
 
         if (!env.ADMIN_PASSWORD || !env.SESSION_SECRET) {
-          return json({ error: "ÐÐµ Ð½Ð°ÑÑÑÐ¾ÐµÐ½Ñ ÑÐµÐºÑÐµÑÑ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 500);
+          return json({ error: "\u{41d}\u{435} \u{43d}\u{430}\u{441}\u{442}\u{440}\u{43e}\u{435}\u{43d}\u{44b} \u{441}\u{435}\u{43a}\u{440}\u{435}\u{442}\u{44b} \u{430}\u{434}\u{43c}\u{438}\u{43d}\u{438}\u{441}\u{442}\u{440}\u{430}\u{442}\u{43e}\u{440}\u{430}" }, 500);
         }
 
         if (body.password !== env.ADMIN_PASSWORD) {
-          return json({ error: "ÐÐµÐ²ÐµÑÐ½ÑÐ¹ Ð¿Ð°ÑÐ¾Ð»Ñ" }, 401);
+          return json({ error: "\u{41d}\u{435}\u{432}\u{435}\u{440}\u{43d}\u{44b}\u{439} \u{43f}\u{430}\u{440}\u{43e}\u{43b}\u{44c}" }, 401);
         }
 
         const token = await signToken(env.SESSION_SECRET);
@@ -87,18 +87,18 @@ export default {
           items.length === 0 ||
           items.length > 30
         ) {
-          return json({ error: "ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¸Ð¼Ñ, ÑÐµÐ»ÐµÑÐ¾Ð½ Ð¸ ÑÐ¾Ð²Ð°ÑÑ" }, 400);
+          return json({ error: "\u{41f}\u{440}\u{43e}\u{432}\u{435}\u{440}\u{44c}\u{442}\u{435} \u{438}\u{43c}\u{44f}, \u{442}\u{435}\u{43b}\u{435}\u{444}\u{43e}\u{43d} \u{438} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{44b}" }, 400);
         }
 
         const delivery = body.delivery_method;
         const address = String(body.delivery_address || "").trim();
 
         if (!["courier", "pickup"].includes(delivery)) {
-          return json({ error: "ÐÑÐ±ÐµÑÐ¸ÑÐµ ÑÐ¿Ð¾ÑÐ¾Ð± Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ñ" }, 400);
+          return json({ error: "\u{412}\u{44b}\u{431}\u{435}\u{440}\u{438}\u{442}\u{435} \u{441}\u{43f}\u{43e}\u{441}\u{43e}\u{431} \u{43f}\u{43e}\u{43b}\u{443}\u{447}\u{435}\u{43d}\u{438}\u{44f}" }, 400);
         }
 
         if (delivery === "courier" && !address) {
-          return json({ error: "Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð°Ð´ÑÐµÑ Ð´Ð¾ÑÑÐ°Ð²ÐºÐ¸" }, 400);
+          return json({ error: "\u{423}\u{43a}\u{430}\u{436}\u{438}\u{442}\u{435} \u{430}\u{434}\u{440}\u{435}\u{441} \u{434}\u{43e}\u{441}\u{442}\u{430}\u{432}\u{43a}\u{438}" }, 400);
         }
 
         const payment = "cash_on_delivery";
@@ -116,11 +116,11 @@ export default {
             quantity < 1 ||
             quantity > 10000
           ) {
-            return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ÑÐ¾Ð²Ð°Ñ Ð¸Ð»Ð¸ ÐºÐ¾Ð»Ð¸ÑÐµÑÑÐ²Ð¾" }, 400);
+            return json({ error: "\u{41d}\u{435}\u{43a}\u{43e}\u{440}\u{440}\u{435}\u{43a}\u{442}\u{43d}\u{44b}\u{439} \u{442}\u{43e}\u{432}\u{430}\u{440} \u{438}\u{43b}\u{438} \u{43a}\u{43e}\u{43b}\u{438}\u{447}\u{435}\u{441}\u{442}\u{432}\u{43e}" }, 400);
           }
 
           if (!["piece", "pack", "bulk"].includes(priceType)) {
-            return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ÑÐ¸Ð¿ ÑÐµÐ½Ñ" }, 400);
+            return json({ error: "\u{41d}\u{435}\u{43a}\u{43e}\u{440}\u{440}\u{435}\u{43a}\u{442}\u{43d}\u{44b}\u{439} \u{442}\u{438}\u{43f} \u{446}\u{435}\u{43d}\u{44b}" }, 400);
           }
 
           const product = await env.DB.prepare(`
@@ -132,7 +132,7 @@ export default {
           `).bind(productId).first();
 
           if (!product || !product.is_active) {
-            return json({ error: "ÐÐ´Ð¸Ð½ Ð¸Ð· ÑÐ¾Ð²Ð°ÑÐ¾Ð² Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½" }, 400);
+            return json({ error: "\u{41e}\u{434}\u{438}\u{43d} \u{438}\u{437} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{43e}\u{432} \u{43d}\u{435}\u{434}\u{43e}\u{441}\u{442}\u{443}\u{43f}\u{435}\u{43d}" }, 400);
           }
 
           let price;
@@ -144,7 +144,7 @@ export default {
 
             if (!price || price <= 0) {
               return json({
-                error: `ÐÐ»Ñ ÑÐ¾Ð²Ð°ÑÐ° ${product.name} Ð½Ðµ Ð·Ð°Ð´Ð°Ð½Ð° ÑÐµÐ½Ð° ÑÐ¿Ð°ÐºÐ¾Ð²ÐºÐ¸`
+                error: `\u{414}\u{43b}\u{44f} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{430} ${product.name} \u{43d}\u{435} \u{437}\u{430}\u{434}\u{430}\u{43d}\u{430} \u{446}\u{435}\u{43d}\u{430} \u{443}\u{43f}\u{430}\u{43a}\u{43e}\u{432}\u{43a}\u{438}`
               }, 400);
             }
           } else {
@@ -156,7 +156,7 @@ export default {
               quantity < Number(product.wholesale_minimum || 50)
             ) {
               return json({
-                error: `ÐÐ»Ñ Ð¾Ð¿ÑÐ¾Ð²Ð¾Ð¹ ÑÐµÐ½Ñ ÑÐ¾Ð²Ð°ÑÐ° ${product.name} Ð½ÑÐ¶Ð½Ð¾ Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ ${product.wholesale_minimum} ÑÑ.`
+                error: `\u{414}\u{43b}\u{44f} \u{43e}\u{43f}\u{442}\u{43e}\u{432}\u{43e}\u{439} \u{446}\u{435}\u{43d}\u{44b} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{430} ${product.name} \u{43d}\u{443}\u{436}\u{43d}\u{43e} \u{43c}\u{438}\u{43d}\u{438}\u{43c}\u{443}\u{43c} ${product.wholesale_minimum} \u{448}\u{442}.`
               }, 400);
             }
           }
@@ -224,24 +224,24 @@ export default {
 }
 
         const telegramText = [
-          `<b>ð· NORV â ÐÐÐÐ«Ð ÐÐÐÐÐ â${orderId}</b>`,
+          `<b>\u{1f337} NORV \u{2014} \u{41d}\u{41e}\u{412}\u{42b}\u{419} \u{417}\u{410}\u{41a}\u{410}\u{417} \u{2116}${orderId}</b>`,
           "",
-          `<b>ÐÐ¾ÐºÑÐ¿Ð°ÑÐµÐ»Ñ:</b> ${escapeHtml(customer.name)}`,
-          `<b>Ð¢ÐµÐ»ÐµÑÐ¾Ð½:</b> ${escapeHtml(customer.phone)}`,
-          `<b>ÐÐ¾Ð»ÑÑÐµÐ½Ð¸Ðµ:</b> ${delivery === "courier" ? "ÐÑÑÑÐµÑ" : "Ð¡Ð°Ð¼Ð¾Ð²ÑÐ²Ð¾Ð·"}`,
+          `<b>\u{41f}\u{43e}\u{43a}\u{443}\u{43f}\u{430}\u{442}\u{435}\u{43b}\u{44c}:</b> ${escapeHtml(customer.name)}`,
+          `<b>\u{422}\u{435}\u{43b}\u{435}\u{444}\u{43e}\u{43d}:</b> ${escapeHtml(customer.phone)}`,
+          `<b>\u{41f}\u{43e}\u{43b}\u{443}\u{447}\u{435}\u{43d}\u{438}\u{435}:</b> ${delivery === "courier" ? "\u{41a}\u{443}\u{440}\u{44c}\u{435}\u{440}" : "\u{421}\u{430}\u{43c}\u{43e}\u{432}\u{44b}\u{432}\u{43e}\u{437}"}`,
           delivery === "courier"
-            ? `<b>ÐÐ´ÑÐµÑ:</b> ${escapeHtml(address)}`
+            ? `<b>\u{410}\u{434}\u{440}\u{435}\u{441}:</b> ${escapeHtml(address)}`
             : "",
-          `<b>ÐÐ¿Ð»Ð°ÑÐ°:</b> ÐÐ°Ð»Ð¸ÑÐ½ÑÐ¼Ð¸ Ð¿ÑÐ¸ Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ð¸`,
+          `<b>\u{41e}\u{43f}\u{43b}\u{430}\u{442}\u{430}:</b> \u{41d}\u{430}\u{43b}\u{438}\u{447}\u{43d}\u{44b}\u{43c}\u{438} \u{43f}\u{440}\u{438} \u{43f}\u{43e}\u{43b}\u{443}\u{447}\u{435}\u{43d}\u{438}\u{438}`,
           "",
-          "<b>Ð¢Ð¾Ð²Ð°ÑÑ:</b>",
+          "<b>\u{422}\u{43e}\u{432}\u{430}\u{440}\u{44b}:</b>",
           ...preparedItems.map(item =>
-            `â¢ ${escapeHtml(item.name)} â ${item.quantity} Ã ${item.priceType} â ${formatMoney(item.price * item.quantity)}`
+            `\u{2022} ${escapeHtml(item.name)} \u{2014} ${item.quantity} \u{d7} ${item.priceType} \u{2014} ${formatMoney(item.price * item.quantity)}`
           ),
           "",
-          `<b>ÐÑÐ¾Ð³Ð¾: ${formatMoney(total)}</b>`,
+          `<b>\u{418}\u{442}\u{43e}\u{433}\u{43e}: ${formatMoney(total)}</b>`,
           body.comment
-            ? `\n<b>ÐÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹:</b> ${escapeHtml(body.comment)}`
+            ? `\n<b>\u{41a}\u{43e}\u{43c}\u{43c}\u{435}\u{43d}\u{442}\u{430}\u{440}\u{438}\u{439}:</b> ${escapeHtml(body.comment)}`
             : ""
         ].filter(Boolean).join("\n");
 
@@ -253,11 +253,11 @@ export default {
             reply_markup: {
               inline_keyboard: [[
                 {
-                  text: "â ÐÑÐ¸Ð½ÑÑÑ",
+                  text: "\u{2705} \u{41f}\u{440}\u{438}\u{43d}\u{44f}\u{442}\u{44c}",
                   callback_data: `order:accept:${orderId}`
                 },
                 {
-                  text: "â ÐÑÐºÐ»Ð¾Ð½Ð¸ÑÑ",
+                  text: "\u{274c} \u{41e}\u{442}\u{43a}\u{43b}\u{43e}\u{43d}\u{438}\u{442}\u{44c}",
                   callback_data: `order:reject:${orderId}`
                 }
               ]]
@@ -271,7 +271,7 @@ export default {
           ok: true,
           order_id: orderId,
           total,
-          message: "ÐÐ°ÐºÐ°Ð· ÑÐ¾ÑÑÐ°Ð½ÑÐ½"
+          message: "\u{417}\u{430}\u{43a}\u{430}\u{437} \u{441}\u{43e}\u{445}\u{440}\u{430}\u{43d}\u{451}\u{43d}"
         }, 201);
       }
 
@@ -306,7 +306,7 @@ export default {
           if (!isAdmin) {
             await telegram(env, "sendMessage", {
               chat_id: chatId,
-              text: "â ÐÐ¾ÑÑÑÐ¿ Ðº ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½Ð¸Ñ NORV Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½."
+              text: "\u{26d4} \u{414}\u{43e}\u{441}\u{442}\u{443}\u{43f} \u{43a} \u{443}\u{43f}\u{440}\u{430}\u{432}\u{43b}\u{435}\u{43d}\u{438}\u{44e} NORV \u{43e}\u{433}\u{440}\u{430}\u{43d}\u{438}\u{447}\u{435}\u{43d}."
             });
             return json({ ok: true });
           }
@@ -315,22 +315,22 @@ export default {
             await telegram(env, "sendMessage", {
               chat_id: chatId,
               text: [
-                "ð· <b>NORV â Ð¿Ð°Ð½ÐµÐ»Ñ ÑÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ð¹</b>",
+                "\u{1f337} <b>NORV \u{2014} \u{43f}\u{430}\u{43d}\u{435}\u{43b}\u{44c} \u{443}\u{432}\u{435}\u{434}\u{43e}\u{43c}\u{43b}\u{435}\u{43d}\u{438}\u{439}</b>",
                 "",
-                "ÐÐ¾Ñ Ð¿Ð¾Ð´ÐºÐ»ÑÑÑÐ½ Ð¸ Ð³Ð¾ÑÐ¾Ð² Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÑÑÑ ÑÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ Ð¾ Ð·Ð°ÐºÐ°Ð·Ð°Ñ.",
+                "\u{411}\u{43e}\u{442} \u{43f}\u{43e}\u{434}\u{43a}\u{43b}\u{44e}\u{447}\u{451}\u{43d} \u{438} \u{433}\u{43e}\u{442}\u{43e}\u{432} \u{43e}\u{442}\u{43f}\u{440}\u{430}\u{432}\u{43b}\u{44f}\u{442}\u{44c} \u{443}\u{432}\u{435}\u{434}\u{43e}\u{43c}\u{43b}\u{435}\u{43d}\u{438}\u{44f} \u{43e} \u{437}\u{430}\u{43a}\u{430}\u{437}\u{430}\u{445}.",
                 "",
-                "ÐÐ¾Ð³Ð´Ð° Ð¿Ð¾ÑÑÑÐ¿Ð¸Ñ Ð½Ð¾Ð²ÑÐ¹ Ð·Ð°ÐºÐ°Ð·, Ð·Ð´ÐµÑÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ ÐºÐ°ÑÑÐ¾ÑÐºÐ° Ñ ÐºÐ½Ð¾Ð¿ÐºÐ°Ð¼Ð¸:",
-                "â ÐÑÐ¸Ð½ÑÑÑ â Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ´Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð· Ð¸ ÑÐ¿Ð¸ÑÐ°ÑÑ ÑÐ¾Ð²Ð°Ñ ÑÐ¾ ÑÐºÐ»Ð°Ð´Ð°.",
-                "â ÐÑÐºÐ»Ð¾Ð½Ð¸ÑÑ â Ð¾ÑÐºÐ»Ð¾Ð½Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð· Ð±ÐµÐ· ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ñ ÑÐ¾Ð²Ð°ÑÐ°.",
+                "\u{41a}\u{43e}\u{433}\u{434}\u{430} \u{43f}\u{43e}\u{441}\u{442}\u{443}\u{43f}\u{438}\u{442} \u{43d}\u{43e}\u{432}\u{44b}\u{439} \u{437}\u{430}\u{43a}\u{430}\u{437}, \u{437}\u{434}\u{435}\u{441}\u{44c} \u{43f}\u{43e}\u{44f}\u{432}\u{438}\u{442}\u{441}\u{44f} \u{43a}\u{430}\u{440}\u{442}\u{43e}\u{447}\u{43a}\u{430} \u{441} \u{43a}\u{43d}\u{43e}\u{43f}\u{43a}\u{430}\u{43c}\u{438}:",
+                "\u{2705} \u{41f}\u{440}\u{438}\u{43d}\u{44f}\u{442}\u{44c} \u{2014} \u{43f}\u{43e}\u{434}\u{442}\u{432}\u{435}\u{440}\u{434}\u{438}\u{442}\u{44c} \u{437}\u{430}\u{43a}\u{430}\u{437} \u{438} \u{441}\u{43f}\u{438}\u{441}\u{430}\u{442}\u{44c} \u{442}\u{43e}\u{432}\u{430}\u{440} \u{441}\u{43e} \u{441}\u{43a}\u{43b}\u{430}\u{434}\u{430}.",
+                "\u{274c} \u{41e}\u{442}\u{43a}\u{43b}\u{43e}\u{43d}\u{438}\u{442}\u{44c} \u{2014} \u{43e}\u{442}\u{43a}\u{43b}\u{43e}\u{43d}\u{438}\u{442}\u{44c} \u{437}\u{430}\u{43a}\u{430}\u{437} \u{431}\u{435}\u{437} \u{441}\u{43f}\u{438}\u{441}\u{430}\u{43d}\u{438}\u{44f} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{430}.",
                 "",
-                "ÐÐ¾Ð¼Ð°Ð½Ð´Ñ: /start, /help"
+                "\u{41a}\u{43e}\u{43c}\u{430}\u{43d}\u{434}\u{44b}: /start, /help"
               ].join("\n"),
               parse_mode: "HTML"
             });
           } else {
             await telegram(env, "sendMessage", {
               chat_id: chatId,
-              text: "Ð¯ Ð½Ð° ÑÐ²ÑÐ·Ð¸! ð· ÐÐ»Ñ ÑÐ¿ÑÐ°Ð²ÐºÐ¸ Ð¾ÑÐ¿ÑÐ°Ð²Ñ /help. ÐÐ¾Ð²ÑÐµ Ð·Ð°ÐºÐ°Ð·Ñ Ð¸Ð· Ð¼Ð°Ð³Ð°Ð·Ð¸Ð½Ð° Ð±ÑÐ´ÑÑ Ð¿ÑÐ¸ÑÐ¾Ð´Ð¸ÑÑ ÑÑÐ´Ð° Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸."
+              text: "\u{42f} \u{43d}\u{430} \u{441}\u{432}\u{44f}\u{437}\u{438}! \u{1f337} \u{414}\u{43b}\u{44f} \u{441}\u{43f}\u{440}\u{430}\u{432}\u{43a}\u{438} \u{43e}\u{442}\u{43f}\u{440}\u{430}\u{432}\u{44c} /help. \u{41d}\u{43e}\u{432}\u{44b}\u{435} \u{437}\u{430}\u{43a}\u{430}\u{437}\u{44b} \u{438}\u{437} \u{43c}\u{430}\u{433}\u{430}\u{437}\u{438}\u{43d}\u{430} \u{431}\u{443}\u{434}\u{443}\u{442} \u{43f}\u{440}\u{438}\u{445}\u{43e}\u{434}\u{438}\u{442}\u{44c} \u{441}\u{44e}\u{434}\u{430} \u{430}\u{432}\u{442}\u{43e}\u{43c}\u{430}\u{442}\u{438}\u{447}\u{435}\u{441}\u{43a}\u{438}."
             });
           }
 
@@ -345,7 +345,7 @@ export default {
         ) {
           await telegram(env, "answerCallbackQuery", {
             callback_query_id: callback.id,
-            text: "ÐÐµÑ Ð´Ð¾ÑÑÑÐ¿Ð°",
+            text: "\u{41d}\u{435}\u{442} \u{434}\u{43e}\u{441}\u{442}\u{443}\u{43f}\u{430}",
             show_alert: true
           });
 
@@ -382,18 +382,18 @@ try {
   await telegram(env, "answerCallbackQuery", {
     callback_query_id: callback.id,
     text: insufficientStock
-      ? "â ÐÐµÐ´Ð¾ÑÑÐ°ÑÐ¾ÑÐ½Ð¾ ÑÐ¾Ð²Ð°ÑÐ° Ð½Ð° ÑÐºÐ»Ð°Ð´Ðµ!"
-      : "â ï¸ ÐÑÐ¸Ð±ÐºÐ° Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐºÐ¸ Ð·Ð°ÐºÐ°Ð·Ð°. ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ.",
+      ? "\u{274c} \u{41d}\u{435}\u{434}\u{43e}\u{441}\u{442}\u{430}\u{442}\u{43e}\u{447}\u{43d}\u{43e} \u{442}\u{43e}\u{432}\u{430}\u{440}\u{430} \u{43d}\u{430} \u{441}\u{43a}\u{43b}\u{430}\u{434}\u{435}!"
+      : "\u{26a0}\u{fe0f} \u{41e}\u{448}\u{438}\u{431}\u{43a}\u{430} \u{43e}\u{431}\u{440}\u{430}\u{431}\u{43e}\u{442}\u{43a}\u{438} \u{437}\u{430}\u{43a}\u{430}\u{437}\u{430}. \u{41f}\u{43e}\u{43f}\u{440}\u{43e}\u{431}\u{443}\u{439}\u{442}\u{435} \u{43f}\u{43e}\u{437}\u{436}\u{435}.",
     show_alert: true
   });
 
-  return json({ ok: false, error: "ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð·Ð°ÐºÐ°Ð·" });
+  return json({ ok: false, error: "\u{41d}\u{435} \u{443}\u{434}\u{430}\u{43b}\u{43e}\u{441}\u{44c} \u{43e}\u{431}\u{440}\u{430}\u{431}\u{43e}\u{442}\u{430}\u{442}\u{44c} \u{437}\u{430}\u{43a}\u{430}\u{437}" });
 }
 
         if (!result.meta.changes) {
           await telegram(env, "answerCallbackQuery", {
             callback_query_id: callback.id,
-            text: "ÐÐ°ÐºÐ°Ð· ÑÐ¶Ðµ Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐ°Ð½"
+            text: "\u{417}\u{430}\u{43a}\u{430}\u{437} \u{443}\u{436}\u{435} \u{43e}\u{431}\u{440}\u{430}\u{431}\u{43e}\u{442}\u{430}\u{43d}"
           });
 
           return json({ ok: true });
@@ -402,15 +402,15 @@ try {
         await telegram(env, "answerCallbackQuery", {
           callback_query_id: callback.id,
           text: action === "accept"
-            ? "ÐÐ°ÐºÐ°Ð· Ð¿ÑÐ¸Ð½ÑÑ"
-            : "ÐÐ°ÐºÐ°Ð· Ð¾ÑÐºÐ»Ð¾Ð½ÑÐ½"
+            ? "\u{417}\u{430}\u{43a}\u{430}\u{437} \u{43f}\u{440}\u{438}\u{43d}\u{44f}\u{442}"
+            : "\u{417}\u{430}\u{43a}\u{430}\u{437} \u{43e}\u{442}\u{43a}\u{43b}\u{43e}\u{43d}\u{451}\u{43d}"
         });
 
         const oldText = callback.message?.text || "";
         const newText = oldText +
           (action === "accept"
-            ? "\n\nâ <b>ÐÐÐÐÐ ÐÐ ÐÐÐ¯Ð¢</b>"
-            : "\n\nâ <b>ÐÐÐÐÐ ÐÐ¢ÐÐÐÐÐÐ</b>");
+            ? "\n\n\u{2705} <b>\u{417}\u{410}\u{41a}\u{410}\u{417} \u{41f}\u{420}\u{418}\u{41d}\u{42f}\u{422}</b>"
+            : "\n\n\u{274c} <b>\u{417}\u{410}\u{41a}\u{410}\u{417} \u{41e}\u{422}\u{41a}\u{41b}\u{41e}\u{41d}\u{401}\u{41d}</b>");
 
         await telegram(env, "editMessageText", {
           chat_id: chatId,
@@ -424,7 +424,7 @@ try {
 
       if (path === "/api/orders" && method === "GET") {
         if (!await authorized(request, env)) {
-          return json({ error: "Ð¢ÑÐµÐ±ÑÐµÑÑÑ Ð²ÑÐ¾Ð´ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 401);
+          return json({ error: "\u{422}\u{440}\u{435}\u{431}\u{443}\u{435}\u{442}\u{441}\u{44f} \u{432}\u{445}\u{43e}\u{434} \u{430}\u{434}\u{43c}\u{438}\u{43d}\u{438}\u{441}\u{442}\u{440}\u{430}\u{442}\u{43e}\u{440}\u{430}" }, 401);
         }
 
         const { results } = await env.DB.prepare(`
@@ -444,7 +444,7 @@ try {
 
       if (path.startsWith("/api/products") && method !== "GET") {
         if (!await authorized(request, env)) {
-          return json({ error: "Ð¢ÑÐµÐ±ÑÐµÑÑÑ Ð²ÑÐ¾Ð´ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 401);
+          return json({ error: "\u{422}\u{440}\u{435}\u{431}\u{443}\u{435}\u{442}\u{441}\u{44f} \u{432}\u{445}\u{43e}\u{434} \u{430}\u{434}\u{43c}\u{438}\u{43d}\u{438}\u{441}\u{442}\u{440}\u{430}\u{442}\u{43e}\u{440}\u{430}" }, 401);
         }
 
         if (path === "/api/products" && method === "POST") {
@@ -477,7 +477,7 @@ try {
             Number(p.stock || 0),
             Number(p.package_quantity ?? p.packQty ?? 10),
             Number(p.wholesale_minimum ?? p.bulkMin ?? 50),
-            p.unit || "ÑÑ.",
+            p.unit || "\u{448}\u{442}.",
             p.badge || "",
             types
           ).run();
@@ -488,7 +488,7 @@ try {
         const id = Number(path.split("/").pop());
 
         if (!Number.isInteger(id) || id < 1) {
-          return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ID" }, 400);
+          return json({ error: "\u{41d}\u{435}\u{43a}\u{43e}\u{440}\u{440}\u{435}\u{43a}\u{442}\u{43d}\u{44b}\u{439} ID" }, 400);
         }
 
         if (method === "PUT") {
@@ -525,7 +525,7 @@ try {
             Number(p.stock || 0),
             Number(p.package_quantity ?? p.packQty ?? 10),
             Number(p.wholesale_minimum ?? p.bulkMin ?? 50),
-            p.unit || "ÑÑ.",
+            p.unit || "\u{448}\u{442}.",
             p.badge || "",
             JSON.stringify(p.types || ["piece", "pack", "bulk"]),
             id
@@ -573,7 +573,7 @@ function validateProduct(p) {
     !Number.isFinite(price) ||
     price < 0
   ) {
-    throw new Error("Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÐºÐ¾ÑÑÐµÐºÑÐ½ÑÑ ÑÐ¾Ð·Ð½Ð¸ÑÐ½ÑÑ ÑÐµÐ½Ñ");
+    throw new Error("\u{423}\u{43a}\u{430}\u{436}\u{438}\u{442}\u{435} \u{43d}\u{430}\u{437}\u{432}\u{430}\u{43d}\u{438}\u{435} \u{438} \u{43a}\u{43e}\u{440}\u{440}\u{435}\u{43a}\u{442}\u{43d}\u{443}\u{44e} \u{440}\u{43e}\u{437}\u{43d}\u{438}\u{447}\u{43d}\u{443}\u{44e} \u{446}\u{435}\u{43d}\u{443}");
   }
 }
 
@@ -581,7 +581,7 @@ function makeSlug(value) {
   return String(value)
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9Ð°-ÑÑ]+/gi, "-")
+    .replace(/[^a-z0-9\u{430}-\u{44f}\u{451}]+/gi, "-")
     .replace(/^-+|-+$/g, "") || "product";
 }
 
@@ -598,12 +598,12 @@ function escapeHtml(value) {
 function formatMoney(value) {
   return new Intl.NumberFormat("ru-RU", {
     maximumFractionDigits: 2
-  }).format(value) + " â½";
+  }).format(value) + " \u{20bd}";
 }
 
 async function telegram(env, method, data) {
   if (!env.TELEGRAM_BOT_TOKEN) {
-    throw new Error("TELEGRAM_BOT_TOKEN Ð½Ðµ Ð½Ð°ÑÑÑÐ¾ÐµÐ½");
+    throw new Error("TELEGRAM_BOT_TOKEN \u{43d}\u{435} \u{43d}\u{430}\u{441}\u{442}\u{440}\u{43e}\u{435}\u{43d}");
   }
 
   const response = await fetch(
@@ -618,7 +618,7 @@ async function telegram(env, method, data) {
   const result = await response.json();
 
   if (!response.ok || !result.ok) {
-    throw new Error(result.description || "ÐÑÐ¸Ð±ÐºÐ° Telegram API");
+    throw new Error(result.description || "\u{41e}\u{448}\u{438}\u{431}\u{43a}\u{430} Telegram API");
   }
 
   return result;
