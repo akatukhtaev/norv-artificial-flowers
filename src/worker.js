@@ -1,4 +1,3 @@
-
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -63,11 +62,11 @@ export default {
         const body = await request.json();
 
         if (!env.ADMIN_PASSWORD || !env.SESSION_SECRET) {
-          return json({ error: "Не настроены секреты администратора" }, 500);
+          return json({ error: "ÐÐµ Ð½Ð°ÑÑÑÐ¾ÐµÐ½Ñ ÑÐµÐºÑÐµÑÑ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 500);
         }
 
         if (body.password !== env.ADMIN_PASSWORD) {
-          return json({ error: "Неверный пароль" }, 401);
+          return json({ error: "ÐÐµÐ²ÐµÑÐ½ÑÐ¹ Ð¿Ð°ÑÐ¾Ð»Ñ" }, 401);
         }
 
         const token = await signToken(env.SESSION_SECRET);
@@ -88,18 +87,18 @@ export default {
           items.length === 0 ||
           items.length > 30
         ) {
-          return json({ error: "Проверьте имя, телефон и товары" }, 400);
+          return json({ error: "ÐÑÐ¾Ð²ÐµÑÑÑÐµ Ð¸Ð¼Ñ, ÑÐµÐ»ÐµÑÐ¾Ð½ Ð¸ ÑÐ¾Ð²Ð°ÑÑ" }, 400);
         }
 
         const delivery = body.delivery_method;
         const address = String(body.delivery_address || "").trim();
 
         if (!["courier", "pickup"].includes(delivery)) {
-          return json({ error: "Выберите способ получения" }, 400);
+          return json({ error: "ÐÑÐ±ÐµÑÐ¸ÑÐµ ÑÐ¿Ð¾ÑÐ¾Ð± Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ñ" }, 400);
         }
 
         if (delivery === "courier" && !address) {
-          return json({ error: "Укажите адрес доставки" }, 400);
+          return json({ error: "Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð°Ð´ÑÐµÑ Ð´Ð¾ÑÑÐ°Ð²ÐºÐ¸" }, 400);
         }
 
         const payment = "cash_on_delivery";
@@ -117,11 +116,11 @@ export default {
             quantity < 1 ||
             quantity > 10000
           ) {
-            return json({ error: "Некорректный товар или количество" }, 400);
+            return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ÑÐ¾Ð²Ð°Ñ Ð¸Ð»Ð¸ ÐºÐ¾Ð»Ð¸ÑÐµÑÑÐ²Ð¾" }, 400);
           }
 
           if (!["piece", "pack", "bulk"].includes(priceType)) {
-            return json({ error: "Некорректный тип цены" }, 400);
+            return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ÑÐ¸Ð¿ ÑÐµÐ½Ñ" }, 400);
           }
 
           const product = await env.DB.prepare(`
@@ -133,7 +132,7 @@ export default {
           `).bind(productId).first();
 
           if (!product || !product.is_active) {
-            return json({ error: "Один из товаров недоступен" }, 400);
+            return json({ error: "ÐÐ´Ð¸Ð½ Ð¸Ð· ÑÐ¾Ð²Ð°ÑÐ¾Ð² Ð½ÐµÐ´Ð¾ÑÑÑÐ¿ÐµÐ½" }, 400);
           }
 
           let price;
@@ -145,7 +144,7 @@ export default {
 
             if (!price || price <= 0) {
               return json({
-                error: `Для товара ${product.name} не задана цена упаковки`
+                error: `ÐÐ»Ñ ÑÐ¾Ð²Ð°ÑÐ° ${product.name} Ð½Ðµ Ð·Ð°Ð´Ð°Ð½Ð° ÑÐµÐ½Ð° ÑÐ¿Ð°ÐºÐ¾Ð²ÐºÐ¸`
               }, 400);
             }
           } else {
@@ -157,7 +156,7 @@ export default {
               quantity < Number(product.wholesale_minimum || 50)
             ) {
               return json({
-                error: `Для оптовой цены товара ${product.name} нужно минимум ${product.wholesale_minimum} шт.`
+                error: `ÐÐ»Ñ Ð¾Ð¿ÑÐ¾Ð²Ð¾Ð¹ ÑÐµÐ½Ñ ÑÐ¾Ð²Ð°ÑÐ° ${product.name} Ð½ÑÐ¶Ð½Ð¾ Ð¼Ð¸Ð½Ð¸Ð¼ÑÐ¼ ${product.wholesale_minimum} ÑÑ.`
               }, 400);
             }
           }
@@ -225,24 +224,24 @@ export default {
 }
 
         const telegramText = [
-          `<b>🌷 NORV — НОВЫЙ ЗАКАЗ №${orderId}</b>`,
+          `<b>ð· NORV â ÐÐÐÐ«Ð ÐÐÐÐÐ â${orderId}</b>`,
           "",
-          `<b>Покупатель:</b> ${escapeHtml(customer.name)}`,
-          `<b>Телефон:</b> ${escapeHtml(customer.phone)}`,
-          `<b>Получение:</b> ${delivery === "courier" ? "Курьер" : "Самовывоз"}`,
+          `<b>ÐÐ¾ÐºÑÐ¿Ð°ÑÐµÐ»Ñ:</b> ${escapeHtml(customer.name)}`,
+          `<b>Ð¢ÐµÐ»ÐµÑÐ¾Ð½:</b> ${escapeHtml(customer.phone)}`,
+          `<b>ÐÐ¾Ð»ÑÑÐµÐ½Ð¸Ðµ:</b> ${delivery === "courier" ? "ÐÑÑÑÐµÑ" : "Ð¡Ð°Ð¼Ð¾Ð²ÑÐ²Ð¾Ð·"}`,
           delivery === "courier"
-            ? `<b>Адрес:</b> ${escapeHtml(address)}`
+            ? `<b>ÐÐ´ÑÐµÑ:</b> ${escapeHtml(address)}`
             : "",
-          `<b>Оплата:</b> Наличными при получении`,
+          `<b>ÐÐ¿Ð»Ð°ÑÐ°:</b> ÐÐ°Ð»Ð¸ÑÐ½ÑÐ¼Ð¸ Ð¿ÑÐ¸ Ð¿Ð¾Ð»ÑÑÐµÐ½Ð¸Ð¸`,
           "",
-          "<b>Товары:</b>",
+          "<b>Ð¢Ð¾Ð²Ð°ÑÑ:</b>",
           ...preparedItems.map(item =>
-            `• ${escapeHtml(item.name)} — ${item.quantity} × ${item.priceType} — ${formatMoney(item.price * item.quantity)}`
+            `â¢ ${escapeHtml(item.name)} â ${item.quantity} Ã ${item.priceType} â ${formatMoney(item.price * item.quantity)}`
           ),
           "",
-          `<b>Итого: ${formatMoney(total)}</b>`,
+          `<b>ÐÑÐ¾Ð³Ð¾: ${formatMoney(total)}</b>`,
           body.comment
-            ? `\n<b>Комментарий:</b> ${escapeHtml(body.comment)}`
+            ? `\n<b>ÐÐ¾Ð¼Ð¼ÐµÐ½ÑÐ°ÑÐ¸Ð¹:</b> ${escapeHtml(body.comment)}`
             : ""
         ].filter(Boolean).join("\n");
 
@@ -254,11 +253,11 @@ export default {
             reply_markup: {
               inline_keyboard: [[
                 {
-                  text: "✅ Принять",
+                  text: "â ÐÑÐ¸Ð½ÑÑÑ",
                   callback_data: `order:accept:${orderId}`
                 },
                 {
-                  text: "❌ Отклонить",
+                  text: "â ÐÑÐºÐ»Ð¾Ð½Ð¸ÑÑ",
                   callback_data: `order:reject:${orderId}`
                 }
               ]]
@@ -272,7 +271,7 @@ export default {
           ok: true,
           order_id: orderId,
           total,
-          message: "Заказ сохранён"
+          message: "ÐÐ°ÐºÐ°Ð· ÑÐ¾ÑÑÐ°Ð½ÑÐ½"
         }, 201);
       }
 
@@ -291,7 +290,50 @@ export default {
         const update = await request.json();
         const callback = update.callback_query;
 
+        // Handle regular bot messages and commands.
+        // The admin bot is intentionally restricted to the configured admin chat.
         if (!callback) {
+          const message = update.message;
+          if (!message?.chat?.id) {
+            return json({ ok: true });
+          }
+
+          const chatId = String(message.chat.id);
+          const text = String(message.text || "").trim();
+          const isAdmin = Boolean(env.TELEGRAM_ADMIN_CHAT_ID) &&
+            chatId === String(env.TELEGRAM_ADMIN_CHAT_ID);
+
+          if (!isAdmin) {
+            await telegram(env, "sendMessage", {
+              chat_id: chatId,
+              text: "â ÐÐ¾ÑÑÑÐ¿ Ðº ÑÐ¿ÑÐ°Ð²Ð»ÐµÐ½Ð¸Ñ NORV Ð¾Ð³ÑÐ°Ð½Ð¸ÑÐµÐ½."
+            });
+            return json({ ok: true });
+          }
+
+          if (/^\/(start|help)(@\w+)?(?:\s|$)/i.test(text)) {
+            await telegram(env, "sendMessage", {
+              chat_id: chatId,
+              text: [
+                "ð· <b>NORV â Ð¿Ð°Ð½ÐµÐ»Ñ ÑÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ð¹</b>",
+                "",
+                "ÐÐ¾Ñ Ð¿Ð¾Ð´ÐºÐ»ÑÑÑÐ½ Ð¸ Ð³Ð¾ÑÐ¾Ð² Ð¾ÑÐ¿ÑÐ°Ð²Ð»ÑÑÑ ÑÐ²ÐµÐ´Ð¾Ð¼Ð»ÐµÐ½Ð¸Ñ Ð¾ Ð·Ð°ÐºÐ°Ð·Ð°Ñ.",
+                "",
+                "ÐÐ¾Ð³Ð´Ð° Ð¿Ð¾ÑÑÑÐ¿Ð¸Ñ Ð½Ð¾Ð²ÑÐ¹ Ð·Ð°ÐºÐ°Ð·, Ð·Ð´ÐµÑÑ Ð¿Ð¾ÑÐ²Ð¸ÑÑÑ ÐºÐ°ÑÑÐ¾ÑÐºÐ° Ñ ÐºÐ½Ð¾Ð¿ÐºÐ°Ð¼Ð¸:",
+                "â ÐÑÐ¸Ð½ÑÑÑ â Ð¿Ð¾Ð´ÑÐ²ÐµÑÐ´Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð· Ð¸ ÑÐ¿Ð¸ÑÐ°ÑÑ ÑÐ¾Ð²Ð°Ñ ÑÐ¾ ÑÐºÐ»Ð°Ð´Ð°.",
+                "â ÐÑÐºÐ»Ð¾Ð½Ð¸ÑÑ â Ð¾ÑÐºÐ»Ð¾Ð½Ð¸ÑÑ Ð·Ð°ÐºÐ°Ð· Ð±ÐµÐ· ÑÐ¿Ð¸ÑÐ°Ð½Ð¸Ñ ÑÐ¾Ð²Ð°ÑÐ°.",
+                "",
+                "ÐÐ¾Ð¼Ð°Ð½Ð´Ñ: /start, /help"
+              ].join("\n"),
+              parse_mode: "HTML"
+            });
+          } else {
+            await telegram(env, "sendMessage", {
+              chat_id: chatId,
+              text: "Ð¯ Ð½Ð° ÑÐ²ÑÐ·Ð¸! ð· ÐÐ»Ñ ÑÐ¿ÑÐ°Ð²ÐºÐ¸ Ð¾ÑÐ¿ÑÐ°Ð²Ñ /help. ÐÐ¾Ð²ÑÐµ Ð·Ð°ÐºÐ°Ð·Ñ Ð¸Ð· Ð¼Ð°Ð³Ð°Ð·Ð¸Ð½Ð° Ð±ÑÐ´ÑÑ Ð¿ÑÐ¸ÑÐ¾Ð´Ð¸ÑÑ ÑÑÐ´Ð° Ð°Ð²ÑÐ¾Ð¼Ð°ÑÐ¸ÑÐµÑÐºÐ¸."
+            });
+          }
+
           return json({ ok: true });
         }
 
@@ -303,7 +345,7 @@ export default {
         ) {
           await telegram(env, "answerCallbackQuery", {
             callback_query_id: callback.id,
-            text: "Нет доступа",
+            text: "ÐÐµÑ Ð´Ð¾ÑÑÑÐ¿Ð°",
             show_alert: true
           });
 
@@ -340,18 +382,18 @@ try {
   await telegram(env, "answerCallbackQuery", {
     callback_query_id: callback.id,
     text: insufficientStock
-      ? "❌ Недостаточно товара на складе!"
-      : "⚠️ Ошибка обработки заказа. Попробуйте позже.",
+      ? "â ÐÐµÐ´Ð¾ÑÑÐ°ÑÐ¾ÑÐ½Ð¾ ÑÐ¾Ð²Ð°ÑÐ° Ð½Ð° ÑÐºÐ»Ð°Ð´Ðµ!"
+      : "â ï¸ ÐÑÐ¸Ð±ÐºÐ° Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐºÐ¸ Ð·Ð°ÐºÐ°Ð·Ð°. ÐÐ¾Ð¿ÑÐ¾Ð±ÑÐ¹ÑÐµ Ð¿Ð¾Ð·Ð¶Ðµ.",
     show_alert: true
   });
 
-  return json({ ok: false, error: "Не удалось обработать заказ" });
+  return json({ ok: false, error: "ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐ°ÑÑ Ð·Ð°ÐºÐ°Ð·" });
 }
 
         if (!result.meta.changes) {
           await telegram(env, "answerCallbackQuery", {
             callback_query_id: callback.id,
-            text: "Заказ уже обработан"
+            text: "ÐÐ°ÐºÐ°Ð· ÑÐ¶Ðµ Ð¾Ð±ÑÐ°Ð±Ð¾ÑÐ°Ð½"
           });
 
           return json({ ok: true });
@@ -360,15 +402,15 @@ try {
         await telegram(env, "answerCallbackQuery", {
           callback_query_id: callback.id,
           text: action === "accept"
-            ? "Заказ принят"
-            : "Заказ отклонён"
+            ? "ÐÐ°ÐºÐ°Ð· Ð¿ÑÐ¸Ð½ÑÑ"
+            : "ÐÐ°ÐºÐ°Ð· Ð¾ÑÐºÐ»Ð¾Ð½ÑÐ½"
         });
 
         const oldText = callback.message?.text || "";
         const newText = oldText +
           (action === "accept"
-            ? "\n\n✅ <b>ЗАКАЗ ПРИНЯТ</b>"
-            : "\n\n❌ <b>ЗАКАЗ ОТКЛОНЁН</b>");
+            ? "\n\nâ <b>ÐÐÐÐÐ ÐÐ ÐÐÐ¯Ð¢</b>"
+            : "\n\nâ <b>ÐÐÐÐÐ ÐÐ¢ÐÐÐÐÐÐ</b>");
 
         await telegram(env, "editMessageText", {
           chat_id: chatId,
@@ -382,7 +424,7 @@ try {
 
       if (path === "/api/orders" && method === "GET") {
         if (!await authorized(request, env)) {
-          return json({ error: "Требуется вход администратора" }, 401);
+          return json({ error: "Ð¢ÑÐµÐ±ÑÐµÑÑÑ Ð²ÑÐ¾Ð´ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 401);
         }
 
         const { results } = await env.DB.prepare(`
@@ -402,7 +444,7 @@ try {
 
       if (path.startsWith("/api/products") && method !== "GET") {
         if (!await authorized(request, env)) {
-          return json({ error: "Требуется вход администратора" }, 401);
+          return json({ error: "Ð¢ÑÐµÐ±ÑÐµÑÑÑ Ð²ÑÐ¾Ð´ Ð°Ð´Ð¼Ð¸Ð½Ð¸ÑÑÑÐ°ÑÐ¾ÑÐ°" }, 401);
         }
 
         if (path === "/api/products" && method === "POST") {
@@ -435,7 +477,7 @@ try {
             Number(p.stock || 0),
             Number(p.package_quantity ?? p.packQty ?? 10),
             Number(p.wholesale_minimum ?? p.bulkMin ?? 50),
-            p.unit || "шт.",
+            p.unit || "ÑÑ.",
             p.badge || "",
             types
           ).run();
@@ -446,7 +488,7 @@ try {
         const id = Number(path.split("/").pop());
 
         if (!Number.isInteger(id) || id < 1) {
-          return json({ error: "Некорректный ID" }, 400);
+          return json({ error: "ÐÐµÐºÐ¾ÑÑÐµÐºÑÐ½ÑÐ¹ ID" }, 400);
         }
 
         if (method === "PUT") {
@@ -483,7 +525,7 @@ try {
             Number(p.stock || 0),
             Number(p.package_quantity ?? p.packQty ?? 10),
             Number(p.wholesale_minimum ?? p.bulkMin ?? 50),
-            p.unit || "шт.",
+            p.unit || "ÑÑ.",
             p.badge || "",
             JSON.stringify(p.types || ["piece", "pack", "bulk"]),
             id
@@ -531,7 +573,7 @@ function validateProduct(p) {
     !Number.isFinite(price) ||
     price < 0
   ) {
-    throw new Error("Укажите название и корректную розничную цену");
+    throw new Error("Ð£ÐºÐ°Ð¶Ð¸ÑÐµ Ð½Ð°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¸ ÐºÐ¾ÑÑÐµÐºÑÐ½ÑÑ ÑÐ¾Ð·Ð½Ð¸ÑÐ½ÑÑ ÑÐµÐ½Ñ");
   }
 }
 
@@ -539,7 +581,7 @@ function makeSlug(value) {
   return String(value)
     .toLowerCase()
     .trim()
-    .replace(/[^a-z0-9а-яё]+/gi, "-")
+    .replace(/[^a-z0-9Ð°-ÑÑ]+/gi, "-")
     .replace(/^-+|-+$/g, "") || "product";
 }
 
@@ -556,12 +598,12 @@ function escapeHtml(value) {
 function formatMoney(value) {
   return new Intl.NumberFormat("ru-RU", {
     maximumFractionDigits: 2
-  }).format(value) + " ₽";
+  }).format(value) + " â½";
 }
 
 async function telegram(env, method, data) {
   if (!env.TELEGRAM_BOT_TOKEN) {
-    throw new Error("TELEGRAM_BOT_TOKEN не настроен");
+    throw new Error("TELEGRAM_BOT_TOKEN Ð½Ðµ Ð½Ð°ÑÑÑÐ¾ÐµÐ½");
   }
 
   const response = await fetch(
@@ -576,7 +618,7 @@ async function telegram(env, method, data) {
   const result = await response.json();
 
   if (!response.ok || !result.ok) {
-    throw new Error(result.description || "Ошибка Telegram API");
+    throw new Error(result.description || "ÐÑÐ¸Ð±ÐºÐ° Telegram API");
   }
 
   return result;
