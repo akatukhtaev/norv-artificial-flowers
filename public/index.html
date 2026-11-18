@@ -239,6 +239,7 @@ function exportCSV(){let head=['name','sku','category','price','packPrice','pack
 function animateIn(){if(!window.gsap)return;gsap.fromTo('.heroText>*',{y:20,opacity:0},{y:0,opacity:1,duration:.8,stagger:.12,ease:'power2.out'});gsap.fromTo('.card',{y:18,opacity:0},{y:0,opacity:1,duration:.55,stagger:.06,ease:'power2.out'})}
 if(window.Lenis){const lenis=new Lenis({duration:1.05,smoothWheel:true});function raf(t){lenis.raf(t);requestAnimationFrame(raf)}requestAnimationFrame(raf)}
 el('adminOpen').onclick=adminOpen;load();if(window.lucide)lucide.createIcons();
+</script>
 <script type="module">
 import * as THREE from
 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
