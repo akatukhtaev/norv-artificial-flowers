@@ -14,10 +14,35 @@
 @media(max-width:950px){.grid{grid-template-columns:repeat(3,1fr)}.photo{height:235px}.navlinks{gap:15px}}@media(max-width:650px){.nav{height:67px;padding:0 4%}.logo{font-size:24px}.navlinks{display:none}.hero{min-height:420px;padding:45px 7%;background-position:61% center}.heroText{max-width:330px}.hero h1{font-size:48px}.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.photo{height:180px}.cardbody{padding:11px}.name{font-size:16px}.desc{font-size:9px}.price{font-size:16px}.toolbar select{flex:1;min-width:0}.count{width:100%;margin:0}.bulk{display:block;padding:35px 7%}.benefits{grid-template-columns:1fr;gap:8px}.formgrid,.productdetail{grid-template-columns:1fr}.full{grid-column:auto}.productdetail img{height:250px}.tiers{grid-template-columns:1fr 1fr 1fr}.panel{padding:17px}.navright{gap:6px}.iconbtn{width:34px;height:34px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
 </style>
+  /* NORV — Three.js floating petals */
+.hero {
+  position: relative;
+}
+
+#norv-petals {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.heroText {
+  position: relative;
+  z-index: 2;
+}
+
+prefers-reduced-motion: reduce {
+  #norv-petals {
+    display: none;
+  }
+}
 </head><body>
 <div class="announcement">ИСКУССТВЕННЫЕ ЦВЕТЫ ПРЕМИАЛЬНОГО КАЧЕСТВА · ОПТ И РОЗНИЦА</div>
 <nav class="nav"><a class="logo" href="#">NORV<small>ARTIFICIAL FLOWERS</small></a><div class="navlinks"><a href="#catalog">Каталог</a><a href="#wholesale">Опт</a><a href="#about">Преимущества</a><a href="#contacts">Контакты</a></div><div class="navright"><button class="iconbtn" title="Избранное" onclick="showFavorites()"><i data-lucide="heart"></i><span class="counter" id="favCount">0</span></button><button class="iconbtn" title="Корзина" onclick="openCart()"><i data-lucide="shopping-bag"></i><span class="counter" id="cartCount">0</span></button><button class="iconbtn" title="Администратор" id="adminOpen"><i data-lucide="user-round"></i></button></div></nav>
-<header class="hero"><div class="heroText"><div class="eyebrow">Beauty that lasts</div><h1>Красота,<br>которая остаётся.</h1><p>Искусственные цветы и декоративные композиции с реалистичной фактурой. Выбирайте поштучно, упаковками или оптом.</p><button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Смотреть каталог</button></div></header>
+<header class="hero">
+  <canvas id="norv-petals" aria-hidden="true"></canvas><div class="heroText"><div class="eyebrow">Beauty that lasts</div><h1>Красота,<br>которая остаётся.</h1><p>Искусственные цветы и декоративные композиции с реалистичной фактурой. Выбирайте поштучно, упаковками или оптом.</p><button class="primary" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})">Смотреть каталог</button></div></header>
 <main class="wrap"><section class="intro" id="catalog"><div class="eyebrow">Коллекция NORV</div><h2>Каталог искусственных цветов</h2><p>Розничные и оптовые цены · Российский рубль</p></section>
 <div class="toolbar"><input id="search" placeholder="Поиск по названию или артикулу…"><select id="category"><option value="">Все категории</option></select><select id="type"><option value="">Все типы продажи</option><option value="piece">Поштучно</option><option value="pack">Упаковками</option><option value="bulk">Опт</option></select><select id="sort"><option value="default">Сначала рекомендуемые</option><option value="low">Сначала дешевле</option><option value="high">Сначала дороже</option><option value="name">По названию</option></select><span class="count" id="count"></span></div><div class="chips" id="chips"></div><div class="grid" id="products"></div>
 <section class="bulk" id="wholesale"><div><div class="eyebrow">Для флористов и магазинов</div><h2>Особые условия для оптовых заказов</h2><p>Покупайте искусственные цветы поштучно, упаковками или крупным оптом. Для каждого товара указаны розничная цена, цена упаковки и оптовая стоимость.</p></div><button class="primary" onclick="contactWholesale()">Узнать об опте</button></section>
@@ -214,4 +239,179 @@ function exportCSV(){let head=['name','sku','category','price','packPrice','pack
 function animateIn(){if(!window.gsap)return;gsap.fromTo('.heroText>*',{y:20,opacity:0},{y:0,opacity:1,duration:.8,stagger:.12,ease:'power2.out'});gsap.fromTo('.card',{y:18,opacity:0},{y:0,opacity:1,duration:.55,stagger:.06,ease:'power2.out'})}
 if(window.Lenis){const lenis=new Lenis({duration:1.05,smoothWheel:true});function raf(t){lenis.raf(t);requestAnimationFrame(raf)}requestAnimationFrame(raf)}
 el('adminOpen').onclick=adminOpen;load();if(window.lucide)lucide.createIcons();
-</script></body></html>
+<script type="module">
+import * as THREE from
+'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
+
+(() => {
+  const canvas = document.getElementById('norv-petals');
+  const hero = canvas?.closest('.hero');
+
+  if (
+    !canvas ||
+    !hero ||
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) return;
+
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: true
+  });
+
+  renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio || 1, 1.5)
+  );
+
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+
+  const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.z = 18;
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  // Форма лепестка
+  const shape = new THREE.Shape();
+
+  shape.moveTo(0, 0);
+  shape.bezierCurveTo(-0.22, 0.18, -0.62, 0.55, -0.48, 0.94);
+  shape.bezierCurveTo(-0.36, 1.28, 0.18, 1.2, 0.38, 0.82);
+  shape.bezierCurveTo(0.58, 0.42, 0.22, 0.12, 0, 0);
+
+  const geometry = new THREE.ShapeGeometry(shape, 12);
+
+  const count = window.innerWidth < 650 ? 14 : 26;
+  const petals = [];
+
+  for (let i = 0; i < count; i++) {
+    const material = new THREE.MeshBasicMaterial({
+      color: new THREE.Color().setHSL(
+        0.94 + Math.random() * 0.035,
+        0.45,
+        0.78
+      ),
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    const petal = new THREE.Mesh(geometry, material);
+
+    petal.position.set(
+      (Math.random() - 0.5) * 16,
+      (Math.random() - 0.5) * 9,
+      (Math.random() - 0.5) * 3
+    );
+
+    petal.scale.setScalar(0.25 + Math.random() * 0.48);
+
+    petal.rotation.set(
+      Math.random() * Math.PI,
+      Math.random() * Math.PI,
+      Math.random() * Math.PI
+    );
+
+    petal.userData = {
+      speed: 0.006 + Math.random() * 0.012,
+      drift: 0.25 + Math.random() * 0.55,
+      phase: Math.random() * 6.28,
+      spin: (Math.random() - 0.5) * 0.018
+    };
+
+    group.add(petal);
+    petals.push(petal);
+  }
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  let frame;
+
+  function resize() {
+    const rect = hero.getBoundingClientRect();
+
+    renderer.setSize(
+      Math.max(1, rect.width),
+      Math.max(1, rect.height),
+      false
+    );
+
+    camera.aspect = rect.width / rect.height;
+    camera.position.z = Math.max(15, rect.height / 34);
+    camera.updateProjectionMatrix();
+  }
+
+  resize();
+
+  const observer = new ResizeObserver(resize);
+  observer.observe(hero);
+
+  hero.addEventListener('pointermove', event => {
+    const rect = hero.getBoundingClientRect();
+
+    targetX = (event.clientX - rect.left) / rect.width - 0.5;
+    targetY = (event.clientY - rect.top) / rect.height - 0.5;
+  }, { passive: true });
+
+  hero.addEventListener('pointerleave', () => {
+    targetX = 0;
+    targetY = 0;
+  }, { passive: true });
+
+  const clock = new THREE.Clock();
+
+  function animate() {
+    if (document.hidden) {
+      frame = requestAnimationFrame(animate);
+      return;
+    }
+
+    const time = clock.getElapsedTime();
+
+    mouseX += (targetX - mouseX) * 0.025;
+    mouseY += (targetY - mouseY) * 0.025;
+
+    group.position.x = mouseX * 0.55;
+    group.position.y = -mouseY * 0.35;
+
+    petals.forEach(petal => {
+      const data = petal.userData;
+
+      petal.position.y -= data.speed * 60 / 60;
+
+      petal.position.x +=
+        Math.sin(time * 0.65 + data.phase) *
+        0.003 * data.drift;
+
+      petal.rotation.z += data.spin;
+
+      if (petal.position.y < -5.5) {
+        petal.position.y = 5.5;
+        petal.position.x = (Math.random() - 0.5) * 16;
+      }
+    });
+
+    renderer.render(scene, camera);
+    frame = requestAnimationFrame(animate);
+  }
+
+  animate();
+
+  window.addEventListener('pagehide', () => {
+    cancelAnimationFrame(frame);
+    observer.disconnect();
+    geometry.dispose();
+    group.children.forEach(p => p.material.dispose());
+    renderer.dispose();
+  }, { once: true });
+
+})();
+</script>
+</body>
+</html>
+
